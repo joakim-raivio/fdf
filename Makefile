@@ -1,12 +1,12 @@
 NAME := fdf
 CC := gcc
-FILES := \
-	example
+FILES := main render
 SRCS := $(foreach src, $(FILES), $(addsuffix .c, $(src)))
 OBJS := $(foreach obj, $(FILES), $(addsuffix .o, $(obj)))
 WWW := -Wall -Wextra -Werror
-MINILIB := -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz 
-LIBFT := -I libft/includes -L libft/ -lft
+MINILIB := -lmlx -framework OpenGL -framework AppKit
+LIBFTINC := -I libft
+LIBFT := $(LIBFTINC) -L libft/ -lft
 CFLAGS := $(WWW) $(MINILIB) $(LIBFT)
 
 all: $(NAME)
@@ -19,7 +19,7 @@ objects:
 	@make --no-print-directory -C ./libft
 	@echo "Compiling project object files\n"
 #	@echo $(FILES)
-	@$(CC) $(SRCS) $(CFLAGS) -c
+	@$(CC) $(LIBFTINC) $(WWW) -c $(SRCS) 
 
 clean:
 	@echo "Cleaning project object files\n"
@@ -37,7 +37,7 @@ run: re
 
 debug:
 	@make -C ./libft testlib
-	@$(CC) $(SRCS) $(FLAGS) -g -o $(NAME)
+	@$(CC) $(SRCS) $(CFLAGS) -g -o $(NAME)
 
 drun: fclean debug
 	lldb $(NAME)

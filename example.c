@@ -1,7 +1,10 @@
 #include <mlx.h>
+#include <libft.h>
+#include <math.h>
 
 typedef struct	s_data {
-	void	*img;
+	void	*img1;
+	void	*img2;
 	char	*addr;
 	int		bits_per_pixel;
 	int		line_length;
