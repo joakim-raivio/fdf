@@ -1,6 +1,6 @@
 NAME := fdf
 CC := gcc
-FILES := main render
+FILES := main render init_map helpers interface
 SRCS := $(foreach src, $(FILES), $(addsuffix .c, $(src)))
 OBJS := $(foreach obj, $(FILES), $(addsuffix .o, $(obj)))
 WWW := -Wall -Wextra -Werror
@@ -33,11 +33,11 @@ fclean: clean
 re: fclean all
 
 run: re
-	./$(NAME)
+	./$(NAME) test_maps/basictest.fdf
 
 debug:
 	@make -C ./libft testlib
-	@$(CC) $(SRCS) $(CFLAGS) -g -o $(NAME)
+	$(CC) $(SRCS) $(CFLAGS) -g -o $(NAME)
 
 drun: fclean debug
-	lldb $(NAME)
+	lldb $(NAME) 

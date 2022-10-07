@@ -1,19 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   read_map.c                                         :+:      :+:    :+:   */
+/*   interface.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jraivio <jraivio@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/05 18:24:47 by jraivio           #+#    #+#             */
-/*   Updated: 2022/10/05 19:41:13 by jraivio          ###   ########.fr       */
+/*   Created: 2022/10/07 10:27:12 by jraivio           #+#    #+#             */
+/*   Updated: 2022/10/07 11:25:18 by jraivio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-t_map	read_map(char	*file)
+int	key_hook(int key_code, void *params)
 {
-	//open file
-	//
+	if (key_code == 53)
+		exit(0);
+	(void)params;
+	return (0);
 }
