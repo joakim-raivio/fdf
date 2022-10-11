@@ -6,7 +6,7 @@
 /*   By: jraivio <jraivio@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/06 22:00:36 by jraivio           #+#    #+#             */
-/*   Updated: 2022/10/11 17:40:08 by jraivio          ###   ########.fr       */
+/*   Updated: 2022/10/11 19:56:43 by jraivio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ void	parse_map_line(char *line, t_map *map)
 void	init_map(char *file, t_map *map)
 {
 	int		fd;
-	int		gnl_ret;
 	char	*line;
 
 	ft_bzero(map, sizeof(t_map));
@@ -62,7 +61,6 @@ void	init_map(char *file, t_map *map)
 	fd = open(file, O_RDONLY);
 	if (!fd || fd < 0)
 		panic("Error opening file");
-	gnl_ret = 1;
 	while (get_next_line(fd, &line))
 	{
 		if (map->size.y++ >= MAX_MAP_Y)
