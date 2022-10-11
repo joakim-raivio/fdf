@@ -6,35 +6,33 @@
 /*   By: jraivio <jraivio@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 17:54:20 by jraivio           #+#    #+#             */
-/*   Updated: 2022/10/07 11:20:53 by jraivio          ###   ########.fr       */
+/*   Updated: 2022/10/11 17:51:43 by jraivio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 #include <mlx.h>
 
-void	init_fdf(void **mlx, void **window)
+void	init_fdf(t_frame *frame)
 {
-	*mlx = mlx_init();
-	if (!*mlx)
+	frame->mlx = mlx_init();
+	if (!(frame->mlx))
 		exit (1);
-	*window = mlx_new_window(*mlx, SCREEN_W, SCREEN_H, WINDOW_NAME);
-	if (!*window)
+	frame->window = mlx_new_window(frame->mlx, SCREEN_W, SCREEN_H, WINDOW_NAME);
+	if (!(frame->window))
 		exit (1);
 }
 
 int	main(int argc, char **argv)
 {
-	void	*mlx;
-	void	*window;
-	t_map	map;
+	t_frame	frame;
 
 	if (argc != 2)
 		return (1);
-	init_map(*(argv + 1), &map);
-	init_fdf(&mlx, &window);
-	render(mlx, window, &map);
-	mlx_key_hook(window, key_hook, NULL);
-	mlx_loop(mlx);
+	init_map(*(argv + 1), &(frame.map));
+	init_fdf(&frame);
+	render(frame.mlx, frame.window, &(frame.map), military);
+	mlx_key_hook(frame.window, key_hook, &frame);
+	mlx_loop(frame.mlx);
 	return (0);
 }

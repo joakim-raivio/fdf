@@ -6,18 +6,19 @@
 /*   By: jraivio <jraivio@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/06 22:00:36 by jraivio           #+#    #+#             */
-/*   Updated: 2022/10/07 10:24:35 by jraivio          ###   ########.fr       */
+/*   Updated: 2022/10/11 17:40:08 by jraivio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 #include <fcntl.h>
+#include <math.h>
 
 void	check_z_extremity(t_map *map, t_coord pos)
 {
 	int	z;
 
-	z = map->map[pos.y][pos.x];
+	z = (float)(pos.y + pos.x) - (float)map->map[pos.y][pos.x] * HEIGHTSCALAR;
 	if (z < map->min_z)
 		map->min_z = z;
 	else if (z > map->max_z)
@@ -67,6 +68,7 @@ void	init_map(char *file, t_map *map)
 		if (map->size.y++ >= MAX_MAP_Y)
 			panic("Map input Y too large.");
 		parse_map_line(line, map);
+		free(line);
 	}
 	free(line);
 	if (map->size.x <= 0 || map->size.y <= 0)

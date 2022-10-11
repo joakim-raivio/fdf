@@ -6,7 +6,7 @@
 /*   By: jraivio <jraivio@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 18:43:57 by jraivio           #+#    #+#             */
-/*   Updated: 2022/10/07 10:25:17 by jraivio          ###   ########.fr       */
+/*   Updated: 2022/10/11 17:52:45 by jraivio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	add_line(t_img *img, t_coord start, t_coord end, int color)
 	}
 }
 
-t_coord	get_point_coords(int x, int y, t_map *map)
+t_coord	get_point_coords(int x, int y, t_map *map, t_projection projection)
 {
 	float	zoomscalar;
 	float	rx;
@@ -55,20 +55,20 @@ t_coord	get_point_coords(int x, int y, t_map *map)
 	float	offset_x;
 	float	offset_y;
 
-	(void)map;
-	zoomscalar = (float)SCREEN_H / \
-				(float)ft_intmax((map->size.x + map->size.y), \
-			(map->max_z - map->min_z));
-	offset_x = ((map->size.x - map->size.y) * zoomscalar / 2);
-	offset_y = ((map->size.x + map->size.y) * zoomscalar / 2);
+	zoomscalar = (float)(SCREEN_H - PADDING) / (float)ft_intmax(\
+			(map->max_z - map->min_z), \
+			map->size.x + map->size.y);
+	offset_x = ((float)(map->size.x - map->size.y) * zoomscalar / 2);
+	offset_y = ((float)(map->min_z + map->max_z / (projection + 1)) \
+			* zoomscalar / 2);
 	rx = x - y;
-	ry = x + y;
-	ry -= HEIGHTSCALAR * map->map[y][x];
-	return ((t_coord){round(rx * zoomscalar + SCREEN_W / 2 - offset_x), \
-			round(ry * zoomscalar - offset_y + SCREEN_H / 2)});
+	ry = (float)(x + y) / (float)(projection + 1);
+	ry -= HEIGHTSCALAR * (float)map->map[y][x];
+	return ((t_coord){round((rx * zoomscalar) - offset_x + (SCREEN_W / 2)), \
+			round((ry * zoomscalar) - offset_y + (SCREEN_H / 2))});
 }
 
-void	draw_grid(t_img *img, t_map *map)
+void	draw_grid(t_img *img, t_map *map, t_projection projection)
 {
 	int	x;
 	int	y;
@@ -80,11 +80,11 @@ void	draw_grid(t_img *img, t_map *map)
 		while (x < map->size.x)
 		{
 			if (x + 1 < map->size.x)
-				add_line(img, get_point_coords(x, y, map), \
-						get_point_coords(x + 1, y, map), COLOR);
+				add_line(img, get_point_coords(x, y, map, projection), \
+						get_point_coords(x + 1, y, map, projection), COLOR);
 			if (y + 1 < map->size.y)
-				add_line(img, get_point_coords(x, y, map), \
-						get_point_coords(x, y + 1, map), COLOR);
+				add_line(img, get_point_coords(x, y, map, projection), \
+						get_point_coords(x, y + 1, map, projection), COLOR);
 			x++;
 		}
 		y++;
@@ -92,14 +92,14 @@ void	draw_grid(t_img *img, t_map *map)
 	}
 }
 
-void	render(void *mlx, void *window, t_map *map)
+void	render(void *mlx, void *window, t_map *map, t_projection projection)
 {
 	t_img	img;
 
 	img.img = mlx_new_image(mlx, SCREEN_W, SCREEN_H);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, \
 			&img.line_length, &img.endian);
-	draw_grid(&img, map);
+	draw_grid(&img, map, projection);
 	mlx_put_image_to_window(mlx, window, img.img, 0, 0);
 	mlx_destroy_image(mlx, img.img);
 	(void)map;
