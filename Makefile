@@ -1,25 +1,40 @@
 NAME := fdf
 CC := gcc
 FILES := main render init_map helpers interface
-SRCS := $(foreach src, $(FILES), $(addsuffix .c, $(src)))
-OBJS := $(foreach obj, $(FILES), $(addsuffix .o, $(obj)))
+SRCSDIR := srcs
+SRCS := $(addprefix $(SRCSDIR)/, $(addsuffix .c, $(FILES)))
+OBJSDIR := objs
+OBJS := $(addprefix $(OBJSDIR)/, $(addsuffix .o, $(FILES)))
 WWW := -Wall -Wextra -Werror
 MINILIB := -lmlx -framework OpenGL -framework AppKit
-LIBFTINC := -I libft
-LIBFT := $(LIBFTINC) -L libft/ -lft
+INCS := -I includes -I libft
+HDRS = libft/libft.h includes/fdf.h
+LIBFT := $(INCS) -L libft/ -lft
 CFLAGS := $(WWW) $(MINILIB) $(LIBFT)
+OFLAGS := $(WWW) $(INCS) 
+
+.PHONY: all libftcomp clean fclean re run drun debug
 
 all: $(NAME)
 
-$(NAME): objects
+$(NAME): .prerequisites libft/libft.a $(OBJS) Makefile
+	@touch .prerequisites
 	@echo "Compiling project binary\n"
-	@$(CC) $(OBJS) $(CFLAGS) -o $(NAME)
+	@$(CC) $(OBJS) $(CFLAGS) -o $@
 
-objects:
+.prerequisites: $(DIRS) $(HDRS) $(SRCS)
+
+$(HDRS):
+	touch $@
+
+$(SRCS):
+	touch $@
+
+$(OBJS): $(OBJSDIR)/%.o:$(SRCSDIR)/%.c $(HDRS) Makefile
+	@$(CC) $(OFLAGS) -c $< -o $@
+
+libft/libft.a:
 	@make --no-print-directory -C ./libft
-	@echo "Compiling project object files\n"
-#	@echo $(FILES)
-	@$(CC) $(LIBFTINC) $(WWW) -c $(SRCS) 
 
 clean:
 	@echo "Cleaning project object files\n"
@@ -29,6 +44,7 @@ fclean: clean
 	@make --no-print-directory -C ./libft fclean
 	@echo "Cleaning project binary\n"
 	@rm -f $(NAME)
+	@rm -f .prerequisites
 
 re: fclean all
 
